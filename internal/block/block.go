@@ -19,6 +19,7 @@ func GetBlocksFromFile(path string) ([]Block) {
 		if len(f) > 0 {
 			flag := true
 			for i, b := range f {
+				fmt.Println(b)
 				if b == byte('\n') {
 					lines++
 					continue
@@ -26,6 +27,7 @@ func GetBlocksFromFile(path string) ([]Block) {
 				if lines > 0 {
 					var num []byte
 					for _, bt := range f[i:] {
+						fmt.Println(bt, "second")
 						if bt == byte('\n') || bt == byte(' ') {
 							break
 						}
