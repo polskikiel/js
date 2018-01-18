@@ -3,6 +3,7 @@ package block
 import (
 	"io/ioutil"
 	"fmt"
+	"strconv"
 )
 
 type Block struct {
@@ -11,36 +12,35 @@ type Block struct {
 
 func GetBlocksFromFile(path string) ([]Block) {
 	var blocks []Block
-	lines := 0
 
 	if f, err := ioutil.ReadFile(path); err != nil {
 		fmt.Println("txt file not found", err)
 	} else {
 		if len(f) > 0 {
 			flag := true
-			for i, b := range f {
-				fmt.Println(b)
-				if b == byte('\n') {
-					lines++
-					continue
-				}
-				if lines > 0 {
-					var num []byte
-					for _, bt := range f[i:] {
-						fmt.Println(bt, "second")
-						if bt == byte('\n') || bt == byte(' ') {
-							break
+			whiteSpace := false
+			var num []byte
+
+			for _, b := range f {
+				//fmt.Println(b)
+				if b > 47 && b < 58 {
+					num = append(num, b - 48)
+
+					if whiteSpace {
+						if _, err := convert(num); err != nil {
+							fmt.Errorf("can't conver byte[] to int")
+						} else if flag {
+							flag = false
+						} else if !flag {
+							flag = true
 						}
-						num = append(num, bt)
 					}
 
-					if flag {
-						flag = false
-					} else {
-						flag = true
-					}
+				} else {
+					whiteSpace = true
+					fmt.Println(num)
+					num = []byte{}
 				}
-
 			}
 		} else {
 			fmt.Println("txt file empty")
@@ -48,4 +48,13 @@ func GetBlocksFromFile(path string) ([]Block) {
 
 	}
 	return blocks
+}
+
+func convert(data []byte) (uint32, error) {
+	v, err := strconv.ParseUint(string(data), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	fmt.Println(uint32(v))
+	return uint32(v), nil
 }
