@@ -21,7 +21,7 @@ GOTO:menuLOOP
 set wejscie=".\in"
 set wyjscie=".\out"
 if not exist "%wejscie%" (
-	echo Podana sciezka do plikow z liczbami nie istnieje!
+	echo Podana sciezka do plikow z wymiarami tablic nie istnieje!
 	GOTO:EOF
 )
 if exist "%wejscie%" (

@@ -19,42 +19,56 @@ func GetBlocksFromFile(path string) ([]Block) {
 		if len(f) > 0 {
 			flag := true
 			whiteSpace := false
+			wasWhiteSpace := false
 			var num []byte
+			var h, w int
+
 
 			for _, b := range f {
-				//fmt.Println(b)
 				if b > 47 && b < 58 {
-					num = append(num, b - 48)
-
+					num = append(num, b)
 					if whiteSpace {
-						if _, err := convert(num); err != nil {
-							fmt.Errorf("can't conver byte[] to int")
-						} else if flag {
+						whiteSpace = false
+						if flag {
 							flag = false
-						} else if !flag {
+						} else {
 							flag = true
 						}
 					}
 
 				} else {
+					if whiteSpace {
+						wasWhiteSpace = true
+					} else {
+						wasWhiteSpace = false
+					}
 					whiteSpace = true
-					fmt.Println(num)
-					num = []byte{}
+
+					if !wasWhiteSpace {
+						if !flag {
+							w, _ = strconv.Atoi(string(num))
+							blocks = append(blocks, createBlock(h, w))
+							fmt.Println(len(blocks))
+
+						} else {
+							h, _ = strconv.Atoi(string(num))
+						}
+						num = []byte{}
+					}
 				}
 			}
 		} else {
 			fmt.Println("txt file empty")
 		}
-
 	}
+
 	return blocks
 }
 
-func convert(data []byte) (uint32, error) {
-	v, err := strconv.ParseUint(string(data), 10, 32)
-	if err != nil {
-		return 0, err
-	}
-	fmt.Println(uint32(v))
-	return uint32(v), nil
+func createBlock(width, height int) Block {
+	return Block{Width: width, Height: height}
+}
+
+func (b *Block) String() string {
+	return string(b.Height + b.Width)
 }
