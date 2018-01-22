@@ -3,6 +3,7 @@ package block
 import (
 	"io/ioutil"
 	"fmt"
+	"strconv"
 )
 
 type Block struct {
@@ -11,41 +12,63 @@ type Block struct {
 
 func GetBlocksFromFile(path string) ([]Block) {
 	var blocks []Block
-	lines := 0
 
 	if f, err := ioutil.ReadFile(path); err != nil {
 		fmt.Println("txt file not found", err)
 	} else {
 		if len(f) > 0 {
 			flag := true
-			for i, b := range f {
-				fmt.Println(b)
-				if b == byte('\n') {
-					lines++
-					continue
-				}
-				if lines > 0 {
-					var num []byte
-					for _, bt := range f[i:] {
-						fmt.Println(bt, "second")
-						if bt == byte('\n') || bt == byte(' ') {
-							break
+			whiteSpace := false
+			wasWhiteSpace := false
+			var num []byte
+			var h, w int
+
+
+			for _, b := range f {
+				if b > 47 && b < 58 {
+					num = append(num, b)
+					if whiteSpace {
+						whiteSpace = false
+						if flag {
+							flag = false
+						} else {
+							flag = true
 						}
-						num = append(num, bt)
 					}
 
-					if flag {
-						flag = false
+				} else {
+					if whiteSpace {
+						wasWhiteSpace = true
 					} else {
-						flag = true
+						wasWhiteSpace = false
+					}
+					whiteSpace = true
+
+					if !wasWhiteSpace {
+						if !flag {
+							w, _ = strconv.Atoi(string(num))
+							blocks = append(blocks, createBlock(h, w))
+							fmt.Println(len(blocks))
+
+						} else {
+							h, _ = strconv.Atoi(string(num))
+						}
+						num = []byte{}
 					}
 				}
-
 			}
 		} else {
 			fmt.Println("txt file empty")
 		}
-
 	}
+
 	return blocks
+}
+
+func createBlock(width, height int) Block {
+	return Block{Width: width, Height: height}
+}
+
+func (b *Block) String() string {
+	return string(b.Height + b.Width)
 }

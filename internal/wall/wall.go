@@ -2,13 +2,11 @@ package wall
 
 import "js/internal/block"
 
-type Wall int
-
-func NewWall(blocks []block.Block) Wall {
+func NewWall(blocks []block.Block) int {
 	return buildWall(blocks)
 }
 
-func buildWall(blocks []block.Block) Wall {
+func buildWall(blocks []block.Block) int {
 	blockHeightCache := 0
 	nrOfPosters := 0
 
@@ -17,12 +15,10 @@ func buildWall(blocks []block.Block) Wall {
 			continue
 		}
 
-		nrOfPosters++
-
-
 		blockHeightCache = block.Height
+		nrOfPosters++
 	}
-	return Wall(nrOfPosters)
+	return nrOfPosters
 }
 
 
